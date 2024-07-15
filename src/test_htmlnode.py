@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNODE, LeafNode
+from htmlnode import HTMLNODE, LeafNode, ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     def test_init_default_values(self):
@@ -49,6 +49,47 @@ class TestLeafNode(unittest.TestCase):
         expected_html = 'hello'
         self.assertEqual(leaf.to_html(), expected_html)
 
+class TestParentNode(unittest.TestCase):
+    def test_valid_params(self):
+        parent = ParentNode(
+            tag='div',
+            children=[LeafNode(tag='span', value='child')]
+        )
+        self.assertEqual(parent.tag, 'div')
+        self.assertEqual(len(parent.children), 1)
+        self.assertIsNone(parent.value)
+    
+    def test_creation_missing_tag(self):
+        with self.assertRaises(ValueError):
+            ParentNode(
+                children=[LeafNode(tag="span",value="Child")]
+            )
+
+    def test_creation_missing_children(self):
+        with self.assertRaises(ValueError):
+            ParentNode(tag='div', children=[])
+
+    def test_html_render_with_children(self):
+        parent = ParentNode(
+            tag='p',
+            children=[
+                LeafNode(tag="b", value="Bold text"),
+                LeafNode(value="Normal text"),
+                LeafNode(tag="i", value="italic text"),
+                LeafNode(value="Normal text"),
+            ]
+        )
+        expected_html = "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>"
+        self.assertEqual(parent.to_html(), expected_html)
+
+    def test_html_render_with_props(self):
+        parent = ParentNode(
+            tag='div',
+            children=[LeafNode(tag='span',value='child')],
+            props={"class": "container"}
+        )
+        expected_html = '<div class="container"><span>child</span></div>'
+        self.assertEqual(parent.to_html(), expected_html)
 
 if __name__ == "__main__":
     unittest.main()

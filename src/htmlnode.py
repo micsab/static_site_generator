@@ -11,6 +11,7 @@ class HTMLNODE():
     def props_to_html(self):
         if self.props:
             return " ".join([f'{key}="{value}"' for key, value in self.props.items()])
+        return ""
         
     def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
@@ -63,8 +64,14 @@ def main():
         "target": "_blank",
     }
 
-    html_node = HTMLNODE('p','yadda yadda',None, proppy)
-    print(html_node)
+
+    parent = ParentNode(
+            tag='div',
+            children=[LeafNode(tag='spans',value='child')],
+            props={"class": "container"}
+        )
+    
+    print(parent)
 
 if __name__ == "__main__":
     main()
